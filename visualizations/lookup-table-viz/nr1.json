@@ -1,0 +1,65 @@
+{
+    "schemaType": "VISUALIZATION",
+    "id": "lookup-table-viz",
+    "displayName": "LookupTableViz",
+    "description": "",
+    "configuration": [
+        {
+            "name": "nrqlQueries",
+            "title": "NRQL Queries",
+            "type": "collection",
+            "items": [
+                {
+                    "name": "accountId",
+                    "title": "Account ID",
+                    "description": "Account ID to be associated with the query",
+                    "type": "account-id"
+                },
+                {
+                    "name": "query",
+                    "title": "Query",
+                    "description": "NRQL query for visualization",
+                    "type": "nrql"
+                }
+            ]
+        },
+        {
+            "name": "chartType",
+            "title": "Chart Type",
+            "description": "Unit of measurement for attribute being plotted.",
+            "type": "enum",
+            "items": [
+              {
+                "title": "Bullet",
+                "value": "bullet"
+              },
+              {
+                "title": "Billboard",
+                "value": "billboard"
+              },
+              {
+                "title": "Table",
+                "value": "table"
+              },
+              {
+                "title": "Timeseries Line",
+                "value": "line"
+              },
+              {
+                "title": "Timeseries Area",
+                "value": "area"
+              },
+              {
+                "title": "Pie",
+                "value": "pie"
+              }
+            ]
+        },
+        {
+          "name": "dashboardUrl",
+          "title": "Dashboard Url (Filtering)",
+          "description": "If you want to filter to another dashboard/tab, copy/paste the url here",
+          "type": "string"
+        }
+    ]
+}
