@@ -89,15 +89,18 @@ export default class LookupTableVizVisualization extends React.Component {
       return string.match(regexSince)[0];
     };
 
-    const from = query.match(/(?<=from\s*)(.*?)(?=\s)/gi).find((e) => e);
+    const from = query.match(/(?<=from\s*)(.*?)(?=$|\s)/gi).find((e) => e);
+    console.log({ from, query: query
+      .match(/(?<=select\s*)(.*?)(?=$|\s)/gi)
+      .find((e) => e) });
     const selectAttribute = query
-      .match(/(?<=select\s*)(.*?)(?=\s)/gi)
+      .match(/(?<=select\s*)(.*?)(?=$|\s)/gi)
       .find((e) => e)
       .replace("uniques(", "")
       .replace(")", "");
     // console.log({ selectAttribute });
 
-    const since = calculateSince(query.match(/since.*/i)[0]);
+    // const since = calculateSince(query.match(/since.*/i)[0]);
 
     return selectAttribute;
   };
@@ -164,7 +167,7 @@ export default class LookupTableVizVisualization extends React.Component {
     const { mainQuery, lookupQuery } = this.transformNrql(nrqlQueries[0].query);
     console.log({ mainQuery, lookupQuery });
     const lookupAttribute = this.parseQuery(lookupQuery);
-
+    console.log({ lookupAttribute });
     return (
       <NerdletStateContext.Consumer>
         {(nerdletState) => {
@@ -186,9 +189,12 @@ export default class LookupTableVizVisualization extends React.Component {
                 }
 
                 if (error) {
-                  return <ErrorState />;
+                  if (error.message.includes('No events found')) {
+                    return <LookupNoData />;
+                  }
+                  return <ErrorState />
                 }
-                // console.log({ data });
+                console.log({ data });
                 const lookupData = data[0].data.map(
                   (entry) => `'${entry[lookupAttribute].replace(/'/g, "\\'")}'`
                 );
@@ -221,8 +227,11 @@ export default class LookupTableVizVisualization extends React.Component {
                           }
 
                           if (error) {
-                            console.log(error);
-                            return <ErrorState />;
+                            console.log({ error });
+                            if (error.message.includes('No events found')) {
+                              return <NoData />;
+                            }
+                            return <ErrorState />
                           }
                           const { dashboardUrl } = this.props;
 
@@ -338,6 +347,34 @@ const ErrorState = () => (
         type={HeadingText.TYPE.HEADING_3}
       >
         Oops! Something went wrong.
+      </HeadingText>
+    </CardBody>
+  </Card>
+);
+
+const LookupNoData = () => (
+  <Card className="ErrorState">
+    <CardBody className="ErrorState-cardBody">
+      <HeadingText
+        className="ErrorState-headingText"
+        spacingType={[HeadingText.SPACING_TYPE.LARGE]}
+        type={HeadingText.TYPE.HEADING_3}
+      >
+        The lookup query returned no data
+      </HeadingText>
+    </CardBody>
+  </Card>
+);
+
+const NoData = () => (
+  <Card className="ErrorState">
+    <CardBody className="ErrorState-cardBody">
+      <HeadingText
+        className="ErrorState-headingText"
+        spacingType={[HeadingText.SPACING_TYPE.LARGE]}
+        type={HeadingText.TYPE.HEADING_3}
+      >
+        The query returned no data
       </HeadingText>
     </CardBody>
   </Card>
