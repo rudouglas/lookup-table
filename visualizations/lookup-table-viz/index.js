@@ -93,28 +93,19 @@ export default class LookupTableVizVisualization extends React.Component {
     console.log({ from, query: query
       .match(/(?<=select\s*)(.*?)(?=$|\s)/gi)
       .find((e) => e) });
-    const selectAttribute = query
+    let selectAttribute = query
       .match(/(?<=select\s*)(.*?)(?=$|\s)/gi)
       .find((e) => e)
-      .replace("uniques(", "")
-      .replace(")", "");
-    // console.log({ selectAttribute });
+    if (selectAttribute.includes("(")) {
+      selectAttribute = selectAttribute.match(/(?<=\()(.*?)(?=\)|\,)/gi).find((e) => e);
+    }
+    console.log({ selectAttribute });
 
     // const since = calculateSince(query.match(/since.*/i)[0]);
 
     return selectAttribute;
   };
-  //   updateDashboardFilter = (filter) => {
-  //     console.log({ prevFilters });
-  //     if (prevFilters) {
-  //       return nerdlet.setUrlState({
-  //         filters: `${prevFilters} AND ${filter}`,
-  //       });
-  //     }
-  //     return nerdlet.setUrlState({
-  //       filters: filter,
-  //     });
-  //   };
+
   facetFilterTableClick = (col, row, filters, nerdletState) => {
     const { dashboardUrl } = this.props;
     // console.log({ row, col });
